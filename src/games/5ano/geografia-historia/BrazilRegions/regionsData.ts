@@ -176,137 +176,83 @@ function generateDistractorStates(correct: string, count: number): string[] {
   return shuffle([correct, ...distractors]);
 }
 
+// ── FÁCIL ──────────────────────────────────────────────────────────────
+// Temas: regiões, estados, biomas, rios, características geográficas
 export function generateEasyQuestions(count: number): RegionQuestion[] {
   const questions: RegionQuestion[] = [];
   const generators = [
-    // Region by description
+    // --- Regiões e características ---
     () => {
       const region = pickRandom(REGIONS);
       const char = pickRandom(region.characteristics);
-      return {
-        question: `Qual regiao tem esta caracteristica: "${char}"?`,
-        options: generateDistractorRegions(region.name, 4),
-        correct: region.name,
-      };
+      return { question: `Qual regiao tem esta caracteristica: "${char}"?`, options: generateDistractorRegions(region.name, 4), correct: region.name };
     },
-    // Region by color/emoji
     () => {
       const region = pickRandom(REGIONS);
-      return {
-        question: `A regiao representada pelo emoji ${region.emoji} e qual?`,
-        options: generateDistractorRegions(region.name, 4),
-        correct: region.name,
-      };
+      const state = pickRandom(region.states);
+      return { question: `A capital ${state.capital} fica em qual regiao do Brasil?`, options: generateDistractorRegions(region.name, 4), correct: region.name };
     },
-    // Which region is the state in
     () => {
       const state = pickRandom(ALL_STATES);
-      return {
-        question: `Em qual regiao fica o estado ${state.name}?`,
-        options: generateDistractorRegions(state.region, 4),
-        correct: state.region,
-      };
+      return { question: `Em qual regiao fica o estado ${state.name}?`, options: generateDistractorRegions(state.region, 4), correct: state.region };
     },
-    // Biggest/smallest region
-    () => {
-      return {
-        question: 'Qual e a maior regiao do Brasil em area?',
-        options: generateDistractorRegions('Norte', 4),
-        correct: 'Norte',
-      };
-    },
-    () => {
-      return {
-        question: 'Qual regiao tem o menor numero de estados?',
-        options: generateDistractorRegions('Sul', 4),
-        correct: 'Sul',
-      };
-    },
-    () => {
-      return {
-        question: 'Qual regiao abriga a Floresta Amazonica?',
-        options: generateDistractorRegions('Norte', 4),
-        correct: 'Norte',
-      };
-    },
-    () => {
-      return {
-        question: 'Qual regiao e a mais populosa do Brasil?',
-        options: generateDistractorRegions('Sudeste', 4),
-        correct: 'Sudeste',
-      };
-    },
-    () => {
-      return {
-        question: 'Em qual regiao fica a capital do Brasil?',
-        options: generateDistractorRegions('Centro-Oeste', 4),
-        correct: 'Centro-Oeste',
-      };
-    },
-    () => {
-      return {
-        question: 'Qual regiao tem mais estados?',
-        options: generateDistractorRegions('Nordeste', 4),
-        correct: 'Nordeste',
-      };
-    },
-    () => {
-      return {
-        question: 'Qual regiao possui o Pantanal?',
-        options: generateDistractorRegions('Centro-Oeste', 4),
-        correct: 'Centro-Oeste',
-      };
-    },
+    () => ({ question: 'Qual e a maior regiao do Brasil em area?', options: generateDistractorRegions('Norte', 4), correct: 'Norte' }),
+    () => ({ question: 'Qual regiao abriga a Floresta Amazonica?', options: generateDistractorRegions('Norte', 4), correct: 'Norte' }),
+    () => ({ question: 'Qual regiao e a mais populosa do Brasil?', options: generateDistractorRegions('Sudeste', 4), correct: 'Sudeste' }),
+    () => ({ question: 'Em qual regiao fica a capital do Brasil?', options: generateDistractorRegions('Centro-Oeste', 4), correct: 'Centro-Oeste' }),
+    () => ({ question: 'Qual regiao possui o Pantanal?', options: generateDistractorRegions('Centro-Oeste', 4), correct: 'Centro-Oeste' }),
+
+    // --- Biomas ---
+    () => ({ question: 'Qual e o maior bioma do Brasil?', options: shuffle(['Amazonia', 'Cerrado', 'Caatinga', 'Mata Atlantica']), correct: 'Amazonia' }),
+    () => ({ question: 'Em qual bioma encontramos cactos e plantas que guardam agua?', options: shuffle(['Caatinga', 'Amazonia', 'Pantanal', 'Pampa']), correct: 'Caatinga' }),
+    () => ({ question: 'Qual bioma e conhecido como a "savana brasileira"?', options: shuffle(['Cerrado', 'Amazonia', 'Pampa', 'Caatinga']), correct: 'Cerrado' }),
+    () => ({ question: 'Qual bioma fica principalmente na costa leste do Brasil?', options: shuffle(['Mata Atlantica', 'Amazonia', 'Cerrado', 'Pantanal']), correct: 'Mata Atlantica' }),
+    () => ({ question: 'Qual bioma e a maior planicie alagavel do mundo?', options: shuffle(['Pantanal', 'Amazonia', 'Cerrado', 'Pampa']), correct: 'Pantanal' }),
+    () => ({ question: 'O Pampa e um bioma de campos encontrado em qual regiao?', options: generateDistractorRegions('Sul', 4), correct: 'Sul' }),
+    () => ({ question: 'Quantos biomas principais o Brasil possui?', options: shuffle(['6', '3', '10', '2']), correct: '6' }),
+
+    // --- Rios ---
+    () => ({ question: 'Qual e o maior rio do Brasil em volume de agua?', options: shuffle(['Rio Amazonas', 'Rio Sao Francisco', 'Rio Parana', 'Rio Tocantins']), correct: 'Rio Amazonas' }),
+    () => ({ question: 'O Rio Sao Francisco e conhecido como o "rio da..."', options: shuffle(['Integracao nacional', 'Saudade', 'Esperanca', 'Aventura']), correct: 'Integracao nacional' }),
+    () => ({ question: 'Em qual regiao fica o Rio Amazonas?', options: generateDistractorRegions('Norte', 4), correct: 'Norte' }),
+
+    // --- Clima ---
+    () => ({ question: 'Qual regiao do Brasil tem o clima mais frio?', options: generateDistractorRegions('Sul', 4), correct: 'Sul' }),
+    () => ({ question: 'O sertao nordestino tem qual tipo de clima?', options: shuffle(['Semiarido (seco)', 'Equatorial (umido)', 'Subtropical (frio)', 'Polar']), correct: 'Semiarido (seco)' }),
   ];
 
   const usedIndices = new Set<number>();
   while (questions.length < count) {
     let idx: number;
     if (usedIndices.size < generators.length) {
-      do {
-        idx = Math.floor(Math.random() * generators.length);
-      } while (usedIndices.has(idx));
+      do { idx = Math.floor(Math.random() * generators.length); } while (usedIndices.has(idx));
       usedIndices.add(idx);
     } else {
       idx = Math.floor(Math.random() * generators.length);
     }
     questions.push(generators[idx]());
   }
-
   return shuffle(questions);
 }
 
+// ── MÉDIO ──────────────────────────────────────────────────────────────
+// Temas: estados/capitais, biomas aprofundados, população, economia, cidade/campo, transportes
 export function generateMediumQuestions(count: number): RegionQuestion[] {
   const questions: RegionQuestion[] = [];
   const generators = [
-    // State to region
+    // --- Estados e capitais ---
     () => {
       const state = pickRandom(ALL_STATES);
-      return {
-        question: `O estado ${state.name} pertence a qual regiao?`,
-        options: generateDistractorRegions(state.region, 4),
-        correct: state.region,
-      };
+      return { question: `O estado ${state.name} pertence a qual regiao?`, options: generateDistractorRegions(state.region, 4), correct: state.region };
     },
-    // Capital identification
     () => {
       const state = pickRandom(ALL_STATES);
-      return {
-        question: `Qual e a capital do estado ${state.name}?`,
-        options: generateDistractorCapitals(state.capital, 4),
-        correct: state.capital,
-      };
+      return { question: `Qual e a capital do estado ${state.name}?`, options: generateDistractorCapitals(state.capital, 4), correct: state.capital };
     },
-    // State by capital
     () => {
       const state = pickRandom(ALL_STATES);
-      return {
-        question: `${state.capital} e a capital de qual estado?`,
-        options: generateDistractorStates(state.name, 4),
-        correct: state.name,
-      };
+      return { question: `${state.capital} e a capital de qual estado?`, options: generateDistractorStates(state.name, 4), correct: state.name };
     },
-    // Region characteristic
     () => {
       const region = pickRandom(REGIONS);
       const char = pickRandom(region.characteristics);
@@ -318,16 +264,10 @@ export function generateMediumQuestions(count: number): RegionQuestion[] {
         correct: char,
       };
     },
-    // Abbreviation to state
     () => {
       const state = pickRandom(ALL_STATES);
-      return {
-        question: `A sigla "${state.abbreviation}" corresponde a qual estado?`,
-        options: generateDistractorStates(state.name, 4),
-        correct: state.name,
-      };
+      return { question: `A sigla "${state.abbreviation}" corresponde a qual estado?`, options: generateDistractorStates(state.name, 4), correct: state.name };
     },
-    // Which state is NOT in this region
     () => {
       const region = pickRandom(REGIONS);
       const otherRegions = REGIONS.filter((r) => r.name !== region.name);
@@ -339,25 +279,48 @@ export function generateMediumQuestions(count: number): RegionQuestion[] {
         correct: wrongState.name,
       };
     },
+
+    // --- Biomas aprofundados ---
+    () => ({ question: 'Qual bioma brasileiro e o mais desmatado?', options: shuffle(['Mata Atlantica', 'Amazonia', 'Cerrado', 'Pantanal']), correct: 'Mata Atlantica' }),
+    () => ({ question: 'A Caatinga e um bioma exclusivo de qual pais?', options: shuffle(['Brasil', 'Argentina', 'Colombia', 'Paraguai']), correct: 'Brasil' }),
+    () => ({ question: 'Qual bioma e fundamental para a producao de agua no Brasil?', options: shuffle(['Cerrado', 'Pampa', 'Pantanal', 'Caatinga']), correct: 'Cerrado' }),
+    () => ({ question: 'A onca-pintada vive principalmente em quais biomas?', options: shuffle(['Amazonia e Pantanal', 'Pampa e Caatinga', 'Mata Atlantica e Cerrado', 'Caatinga e Pampa']), correct: 'Amazonia e Pantanal' }),
+    () => ({ question: 'Qual bioma tem arvores retorcidas e troncos grossos?', options: shuffle(['Cerrado', 'Amazonia', 'Pantanal', 'Mata Atlantica']), correct: 'Cerrado' }),
+    () => ({ question: 'A araucaria (pinheiro-do-parana) e tipica de qual bioma/regiao?', options: shuffle(['Mata Atlantica do Sul', 'Amazonia', 'Caatinga', 'Cerrado']), correct: 'Mata Atlantica do Sul' }),
+
+    // --- População e migração ---
+    () => ({ question: 'Qual e a cidade mais populosa do Brasil?', options: shuffle(['Sao Paulo', 'Rio de Janeiro', 'Brasilia', 'Salvador']), correct: 'Sao Paulo' }),
+    () => ({ question: 'A maioria da populacao brasileira vive em areas...', options: shuffle(['Urbanas (cidades)', 'Rurais (campo)', 'Florestais', 'Litoraneas']), correct: 'Urbanas (cidades)' }),
+    () => ({ question: 'A migracao de nordestinos para o Sudeste aconteceu principalmente em busca de...', options: shuffle(['Emprego e melhores condicoes de vida', 'Praias mais bonitas', 'Clima mais quente', 'Terras para plantar']), correct: 'Emprego e melhores condicoes de vida' }),
+    () => ({ question: 'O exodo rural e quando as pessoas saem do...', options: shuffle(['Campo para a cidade', 'Cidade para o campo', 'Brasil para outro pais', 'Litoral para o interior']), correct: 'Campo para a cidade' }),
+
+    // --- Economia ---
+    () => ({ question: 'Qual regiao e a maior produtora de soja do Brasil?', options: generateDistractorRegions('Centro-Oeste', 4), correct: 'Centro-Oeste' }),
+    () => ({ question: 'O que e agropecuaria?', options: shuffle(['Agricultura e criacao de animais juntas', 'Apenas plantar', 'Apenas criar animais', 'Industria de alimentos']), correct: 'Agricultura e criacao de animais juntas' }),
+    () => ({ question: 'Qual regiao concentra a maior parte das industrias do Brasil?', options: generateDistractorRegions('Sudeste', 4), correct: 'Sudeste' }),
+    () => ({ question: 'O acai, fruto tipico da Amazonia, e produzido principalmente em qual regiao?', options: generateDistractorRegions('Norte', 4), correct: 'Norte' }),
+
+    // --- Cidade e campo ---
+    () => ({ question: 'Qual a diferenca entre zona urbana e zona rural?', options: shuffle(['Urbana e a cidade, rural e o campo', 'Sao a mesma coisa', 'Rural e a cidade, urbana e o campo', 'Urbana e a praia, rural e a montanha']), correct: 'Urbana e a cidade, rural e o campo' }),
+    () => ({ question: 'O que o campo produz que chega ate as cidades?', options: shuffle(['Alimentos como arroz, feijao e leite', 'Carros e computadores', 'Roupas e sapatos', 'Livros e cadernos']), correct: 'Alimentos como arroz, feijao e leite' }),
   ];
 
   const usedIndices = new Set<number>();
   while (questions.length < count) {
     let idx: number;
     if (usedIndices.size < generators.length) {
-      do {
-        idx = Math.floor(Math.random() * generators.length);
-      } while (usedIndices.has(idx));
+      do { idx = Math.floor(Math.random() * generators.length); } while (usedIndices.has(idx));
       usedIndices.add(idx);
     } else {
       idx = Math.floor(Math.random() * generators.length);
     }
     questions.push(generators[idx]());
   }
-
   return shuffle(questions);
 }
 
+// ── DIFÍCIL ────────────────────────────────────────────────────────────
+// Temas: capitais difíceis, siglas, biomas e desmatamento, meio ambiente, rios, relevo, energia, transporte
 export function generateHardQuestions(count: number): RegionQuestion[] {
   const questions: RegionQuestion[] = [];
   const regionStateCounts: Record<Region, number> = {
@@ -369,53 +332,33 @@ export function generateHardQuestions(count: number): RegionQuestion[] {
   };
 
   const generators = [
-    // Capital of harder states
+    // --- Capitais e siglas difíceis ---
     () => {
       const hardStates = ALL_STATES.filter((s) =>
         ['Tocantins', 'Amapa', 'Roraima', 'Sergipe', 'Piaui', 'Espirito Santo', 'Rondonia'].includes(s.name)
       );
       const state = pickRandom(hardStates);
-      return {
-        question: `Qual e a capital de ${state.name}?`,
-        options: generateDistractorCapitals(state.capital, 4),
-        correct: state.capital,
-      };
+      return { question: `Qual e a capital de ${state.name}?`, options: generateDistractorCapitals(state.capital, 4), correct: state.capital };
     },
-    // How many states in a region
     () => {
       const region = pickRandom(REGIONS);
       const correctCount = String(regionStateCounts[region.name]);
       const allCounts = ['3', '4', '7', '9'];
       const distractors = allCounts.filter((c) => c !== correctCount);
-      return {
-        question: `Quantos estados tem a regiao ${region.name}?`,
-        options: shuffle([correctCount, ...shuffle(distractors).slice(0, 3)]),
-        correct: correctCount,
-      };
+      return { question: `Quantos estados tem a regiao ${region.name}?`, options: shuffle([correctCount, ...shuffle(distractors).slice(0, 3)]), correct: correctCount };
     },
-    // Reverse capital to state (harder)
     () => {
       const hardStates = ALL_STATES.filter((s) =>
         ['Palmas', 'Boa Vista', 'Macapa', 'Rio Branco', 'Aracaju', 'Teresina', 'Florianopolis'].includes(s.capital)
       );
       const state = pickRandom(hardStates);
-      return {
-        question: `A cidade de ${state.capital} e capital de qual estado?`,
-        options: generateDistractorStates(state.name, 4),
-        correct: state.name,
-      };
+      return { question: `A cidade de ${state.capital} e capital de qual estado?`, options: generateDistractorStates(state.name, 4), correct: state.name };
     },
-    // Region characteristics deep
     () => {
       const region = pickRandom(REGIONS);
       const char = pickRandom(region.characteristics);
-      return {
-        question: `"${char}" - Esta frase descreve qual regiao?`,
-        options: generateDistractorRegions(region.name, 4),
-        correct: region.name,
-      };
+      return { question: `"${char}" - Esta frase descreve qual regiao?`, options: generateDistractorRegions(region.name, 4), correct: region.name };
     },
-    // State abbreviation for harder states
     () => {
       const hardStates = ALL_STATES.filter((s) =>
         ['TO', 'AP', 'RR', 'SE', 'PI', 'MS', 'ES'].includes(s.abbreviation)
@@ -427,51 +370,60 @@ export function generateHardQuestions(count: number): RegionQuestion[] {
         correct: state.abbreviation,
       };
     },
-    // Which capital is in this region
     () => {
       const region = pickRandom(REGIONS);
       const state = pickRandom(region.states);
-      const otherCapitals = ALL_STATES
-        .filter((s) => s.region !== region.name)
-        .map((s) => s.capital);
+      const otherCapitals = ALL_STATES.filter((s) => s.region !== region.name).map((s) => s.capital);
       const distractors = shuffle(otherCapitals).slice(0, 3);
-      return {
-        question: `Qual dessas capitais fica na regiao ${region.name}?`,
-        options: shuffle([state.capital, ...distractors]),
-        correct: state.capital,
-      };
+      return { question: `Qual dessas capitais fica na regiao ${region.name}?`, options: shuffle([state.capital, ...distractors]), correct: state.capital };
     },
-    // True/false style
-    () => {
-      return {
-        question: 'Qual e a capital mais jovem do Brasil, planejada e inaugurada em 1989?',
-        options: shuffle(['Palmas', 'Brasilia', 'Goiania', 'Belo Horizonte']),
-        correct: 'Palmas',
-      };
-    },
-    () => {
-      return {
-        question: 'Qual estado brasileiro tem nome composto com "do Sul"?',
-        options: shuffle(['Mato Grosso do Sul', 'Rio de Janeiro', 'Espirito Santo', 'Santa Catarina']),
-        correct: 'Mato Grosso do Sul',
-      };
-    },
+    () => ({ question: 'Qual e a capital mais jovem do Brasil, planejada e inaugurada em 1989?', options: shuffle(['Palmas', 'Brasilia', 'Goiania', 'Belo Horizonte']), correct: 'Palmas' }),
+    () => ({ question: 'Qual estado brasileiro tem nome composto com "do Sul"?', options: shuffle(['Mato Grosso do Sul', 'Rio de Janeiro', 'Espirito Santo', 'Santa Catarina']), correct: 'Mato Grosso do Sul' }),
+
+    // --- Biomas e meio ambiente ---
+    () => ({ question: 'O desmatamento da Amazonia contribui para...', options: shuffle(['Aquecimento global e perda de biodiversidade', 'Mais chuva na regiao', 'Crescimento da floresta', 'Melhoria do clima']), correct: 'Aquecimento global e perda de biodiversidade' }),
+    () => ({ question: 'A Mata Atlantica original cobria quanto do territorio brasileiro?', options: shuffle(['Quase toda a costa leste', 'Apenas o Sul', 'Apenas o Norte', 'O centro do pais']), correct: 'Quase toda a costa leste' }),
+    () => ({ question: 'Hoje, resta aproximadamente quanto da Mata Atlantica original?', options: shuffle(['Menos de 15%', 'Mais de 80%', 'Cerca de 50%', 'Quase 100%']), correct: 'Menos de 15%' }),
+    () => ({ question: 'O Cerrado e importante porque...', options: shuffle(['E o berco de muitos rios e nascentes do Brasil', 'E o bioma mais frio', 'Tem as maiores cidades', 'Nao tem importancia ambiental']), correct: 'E o berco de muitos rios e nascentes do Brasil' }),
+    () => ({ question: 'A queimada no Pantanal prejudica principalmente...', options: shuffle(['A fauna e a flora locais', 'Apenas as cidades', 'Outros paises', 'O fundo do oceano']), correct: 'A fauna e a flora locais' }),
+    () => ({ question: 'A poluicao dos rios e causada principalmente por...', options: shuffle(['Esgoto, lixo e produtos quimicos', 'Chuva e vento', 'Animais selvagens', 'Terremotos']), correct: 'Esgoto, lixo e produtos quimicos' }),
+
+    // --- Rios aprofundados ---
+    () => ({ question: 'O Rio Sao Francisco passa por quais regioes?', options: shuffle(['Sudeste e Nordeste', 'Norte e Sul', 'Centro-Oeste e Sul', 'Norte e Nordeste']), correct: 'Sudeste e Nordeste' }),
+    () => ({ question: 'Qual rio forma as Cataratas do Iguacu?', options: shuffle(['Rio Iguacu', 'Rio Amazonas', 'Rio Sao Francisco', 'Rio Parana']), correct: 'Rio Iguacu' }),
+    () => ({ question: 'A Bacia Amazonica e a maior bacia hidrografica do...', options: shuffle(['Mundo', 'Brasil apenas', 'Hemisferio sul', 'Continente americano']), correct: 'Mundo' }),
+
+    // --- Relevo ---
+    () => ({ question: 'A Planicie Amazonica e uma area de relevo...', options: shuffle(['Baixo e plano, sujeito a inundacoes', 'Muito montanhoso', 'Desértico', 'Vulcanico']), correct: 'Baixo e plano, sujeito a inundacoes' }),
+    () => ({ question: 'A Serra da Mantiqueira fica em qual regiao?', options: generateDistractorRegions('Sudeste', 4), correct: 'Sudeste' }),
+
+    // --- Energia e economia ---
+    () => ({ question: 'A usina de Itaipu, uma das maiores do mundo, produz energia...', options: shuffle(['Hidreletrica (da agua)', 'Solar (do sol)', 'Eolica (do vento)', 'Nuclear']), correct: 'Hidreletrica (da agua)' }),
+    () => ({ question: 'A regiao Nordeste se destaca na producao de energia...', options: shuffle(['Eolica (do vento) e solar', 'Nuclear', 'A carvao', 'A gas']), correct: 'Eolica (do vento) e solar' }),
+    () => ({ question: 'O agronegocio brasileiro exporta principalmente...', options: shuffle(['Soja, carne e cafe', 'Carros e avioes', 'Roupas e sapatos', 'Computadores e celulares']), correct: 'Soja, carne e cafe' }),
+    () => ({ question: 'Qual produto agricola o Brasil e o maior produtor mundial?', options: shuffle(['Cafe', 'Trigo', 'Arroz', 'Batata']), correct: 'Cafe' }),
+
+    // --- Transporte e comunicação ---
+    () => ({ question: 'Qual e o principal meio de transporte de cargas no Brasil?', options: shuffle(['Rodoviario (caminhoes)', 'Ferroviario (trens)', 'Fluvial (barcos)', 'Aereo (avioes)']), correct: 'Rodoviario (caminhoes)' }),
+    () => ({ question: 'Na regiao Norte, o transporte fluvial (por rios) e importante porque...', options: shuffle(['Muitas comunidades so sao acessiveis por rio', 'Nao existem estradas', 'Os rios sao pequenos', 'E mais rapido que o aviao']), correct: 'Muitas comunidades so sao acessiveis por rio' }),
+
+    // --- População e diversidade ---
+    () => ({ question: 'A imigracao japonesa no Brasil se concentrou principalmente em...', options: shuffle(['Sao Paulo', 'Salvador', 'Manaus', 'Porto Alegre']), correct: 'Sao Paulo' }),
+    () => ({ question: 'A imigracao italiana e alema influenciou fortemente a cultura de qual regiao?', options: generateDistractorRegions('Sul', 4), correct: 'Sul' }),
+    () => ({ question: 'O que e uma metrópole?', options: shuffle(['Cidade muito grande que influencia a regiao ao redor', 'Qualquer cidade com praia', 'Uma cidade sem industrias', 'Uma cidade do campo']), correct: 'Cidade muito grande que influencia a regiao ao redor' }),
   ];
 
   const usedIndices = new Set<number>();
   while (questions.length < count) {
     let idx: number;
     if (usedIndices.size < generators.length) {
-      do {
-        idx = Math.floor(Math.random() * generators.length);
-      } while (usedIndices.has(idx));
+      do { idx = Math.floor(Math.random() * generators.length); } while (usedIndices.has(idx));
       usedIndices.add(idx);
     } else {
       idx = Math.floor(Math.random() * generators.length);
     }
     questions.push(generators[idx]());
   }
-
   return shuffle(questions);
 }
 

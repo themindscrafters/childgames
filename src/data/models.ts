@@ -235,6 +235,16 @@ export const GAME_LIST: GameInfo[] = [
     gradeLevel: '5ano',
   },
   {
+    id: 'water-nature',
+    name: 'Água e Natureza',
+    description: 'Ciclo da água, estados da matéria e sustentabilidade',
+    category: 'ciencias',
+    icon: '💧',
+    color: '#0284C7',
+    targetDifficulties: ['none'],
+    gradeLevel: '5ano',
+  },
+  {
     id: 'brazil-regions',
     name: 'Regiões do Brasil',
     description: 'Descubra estados, capitais e regiões',

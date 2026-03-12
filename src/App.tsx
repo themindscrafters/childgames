@@ -25,6 +25,7 @@ import { TextComprehensionGame } from './games/5ano/portugues/TextComprehension/
 // 5º Ano - Ciências
 import { SolarSystemGame } from './games/5ano/ciencias/SolarSystem/SolarSystemGame';
 import { HumanBodyGame } from './games/5ano/ciencias/HumanBody/HumanBodyGame';
+import { WaterNatureGame } from './games/5ano/ciencias/WaterNature/WaterNatureGame';
 // 5º Ano - Geografia e História
 import { BrazilRegionsGame } from './games/5ano/geografia-historia/BrazilRegions/BrazilRegionsGame';
 import { HistoryTimelineGame } from './games/5ano/geografia-historia/HistoryTimeline/HistoryTimelineGame';
@@ -60,6 +61,7 @@ function App() {
               <Route path="/game/text-comprehension" element={<TextComprehensionGame />} />
               <Route path="/game/solar-system" element={<SolarSystemGame />} />
               <Route path="/game/human-body" element={<HumanBodyGame />} />
+              <Route path="/game/water-nature" element={<WaterNatureGame />} />
               <Route path="/game/brazil-regions" element={<BrazilRegionsGame />} />
               <Route path="/game/history-timeline" element={<HistoryTimelineGame />} />
             </Routes>
