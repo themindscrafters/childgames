@@ -220,6 +220,7 @@ export function HistoryTimelineGame() {
         <div style={styles.timelineLine} />
         {timelineDots.map((dot, i) => {
           const isRelated = relatedEvent?.event === dot.label;
+          const isAnswered = feedback === 'correct' && isRelated;
           return (
             <div
               key={i}
@@ -227,20 +228,20 @@ export function HistoryTimelineGame() {
                 position: 'absolute',
                 left: `${dot.position}%`,
                 top: '50%',
-                transform: `translate(-50%, -50%) scale(${isRelated ? 1.4 : 1})`,
+                transform: `translate(-50%, -50%) scale(${isAnswered ? 1.4 : 1})`,
                 transition: 'transform 0.3s ease',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '2px',
-                zIndex: isRelated ? 2 : 1,
+                zIndex: isAnswered ? 2 : 1,
               }}
             >
               <span
                 style={{
-                  fontSize: isRelated ? '20px' : '14px',
-                  filter: isRelated ? 'none' : 'grayscale(0.5)',
-                  opacity: isRelated ? 1 : 0.6,
+                  fontSize: isAnswered ? '20px' : '14px',
+                  filter: 'grayscale(0.5)',
+                  opacity: isAnswered ? 1 : 0.6,
                   transition: 'all 0.3s ease',
                 }}
               >
@@ -250,24 +251,24 @@ export function HistoryTimelineGame() {
                 style={{
                   fontSize: '9px',
                   fontWeight: 700,
-                  color: isRelated ? '#92400E' : '#B45309',
-                  opacity: isRelated ? 1 : 0.5,
+                  color: isAnswered ? '#92400E' : '#B45309',
+                  opacity: isAnswered ? 1 : 0.5,
                   whiteSpace: 'nowrap',
                 }}
               >
-                {dot.year}
+                {isAnswered ? dot.year : '•'}
               </span>
             </div>
           );
         })}
       </div>
 
-      {/* Event display */}
-      {relatedEvent && (
+      {/* Event display - only show after correct answer */}
+      {feedback === 'correct' && relatedEvent && (
         <div
           style={{
             ...styles.eventArea,
-            transform: eventVisible ? 'scale(1)' : 'scale(0)',
+            transform: 'scale(1)',
             transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >

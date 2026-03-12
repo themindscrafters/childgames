@@ -290,12 +290,6 @@ export function BrazilRegionsGame() {
           }}>
             {REGIONS[0].emoji} Norte
           </div>
-          <div style={{
-            fontSize: '11px',
-            color: highlightedRegion === 'Norte' ? '#fff' : '#6B7280',
-          }}>
-            7 estados
-          </div>
         </div>
 
         {/* Row 2: Nordeste (right side, 2 cols) + Centro-Oeste (left side, 1 col) */}
@@ -324,12 +318,6 @@ export function BrazilRegionsGame() {
           }}>
             {REGIONS[2].emoji} Centro-Oeste
           </div>
-          <div style={{
-            fontSize: '11px',
-            color: highlightedRegion === 'Centro-Oeste' ? '#fff' : '#6B7280',
-          }}>
-            4 estados
-          </div>
         </div>
 
         <div
@@ -352,12 +340,6 @@ export function BrazilRegionsGame() {
             color: highlightedRegion === 'Nordeste' ? '#fff' : REGIONS[1].color,
           }}>
             {REGIONS[1].emoji} Nordeste
-          </div>
-          <div style={{
-            fontSize: '11px',
-            color: highlightedRegion === 'Nordeste' ? '#fff' : '#6B7280',
-          }}>
-            9 estados
           </div>
         </div>
 
@@ -382,12 +364,6 @@ export function BrazilRegionsGame() {
           }}>
             {REGIONS[3].emoji} Sudeste
           </div>
-          <div style={{
-            fontSize: '11px',
-            color: highlightedRegion === 'Sudeste' ? '#fff' : '#6B7280',
-          }}>
-            4 estados
-          </div>
         </div>
 
         <div
@@ -409,12 +385,6 @@ export function BrazilRegionsGame() {
             color: highlightedRegion === 'Sul' ? '#fff' : REGIONS[4].color,
           }}>
             {REGIONS[4].emoji} Sul
-          </div>
-          <div style={{
-            fontSize: '11px',
-            color: highlightedRegion === 'Sul' ? '#fff' : '#6B7280',
-          }}>
-            3 estados
           </div>
         </div>
       </div>
