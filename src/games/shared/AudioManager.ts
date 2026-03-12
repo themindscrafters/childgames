@@ -4,7 +4,7 @@ export class AudioManager {
   private narrationEnabled = true;
   private synth: SpeechSynthesis | null = null;
   private audioCtx: AudioContext | null = null;
-  private voicesLoaded = false;
+
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -49,8 +49,7 @@ export class AudioManager {
   private preloadVoices(): void {
     if (!this.synth) return;
     const loadVoices = () => {
-      const voices = this.synth!.getVoices();
-      if (voices.length > 0) this.voicesLoaded = true;
+      this.synth!.getVoices();
     };
     loadVoices();
     this.synth.addEventListener('voiceschanged', loadVoices);

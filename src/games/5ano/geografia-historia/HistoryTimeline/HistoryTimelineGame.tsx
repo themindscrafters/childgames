@@ -29,7 +29,7 @@ export function HistoryTimelineGame() {
   const [showHint, setShowHint] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [currentDescription, setCurrentDescription] = useState('');
-  const [eventVisible, setEventVisible] = useState(false);
+
   const startTime = useRef(new Date());
 
   // Timeline dots for visual element
@@ -51,8 +51,6 @@ export function HistoryTimelineGame() {
     setFeedback(null);
     setShowHint(false);
     setShowDescription(false);
-    setEventVisible(false);
-    setTimeout(() => setEventVisible(true), 100);
   }, [difficultyManager]);
 
   useEffect(() => {
@@ -98,8 +96,6 @@ export function HistoryTimelineGame() {
             setFeedback(null);
             setShowHint(false);
             setShowDescription(false);
-            setEventVisible(false);
-            setTimeout(() => setEventVisible(true), 100);
           }
         }, showDescription ? 3000 : 1500);
       } else {
