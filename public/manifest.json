@@ -1,0 +1,17 @@
+{
+  "name": "Jogos Educativos",
+  "short_name": "Jogos Edu",
+  "description": "Jogos educativos para criancas com dificuldades de aprendizado",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#F0F4FF",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

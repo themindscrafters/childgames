@@ -1,0 +1,370 @@
+export interface SpellingQuestion {
+  word: string;
+  display: string;
+  options: string[];
+  correct: string;
+  rule: string;
+}
+
+export const SPELLING_DATA: Record<'easy' | 'medium' | 'hard', SpellingQuestion[]> = {
+  easy: [
+    // S / SS / C
+    {
+      word: 'passaro',
+      display: 'pa___aro',
+      options: ['ss', 's', 'c'],
+      correct: 'ss',
+      rule: 'Usa-se SS entre vogais para som de S',
+    },
+    {
+      word: 'passeio',
+      display: 'pa___eio',
+      options: ['ss', 's', 'c'],
+      correct: 'ss',
+      rule: 'Usa-se SS entre vogais para som de S',
+    },
+    {
+      word: 'acucar',
+      display: 'a___ucar',
+      options: ['c', 'ss', 's'],
+      correct: 'c',
+      rule: 'Usa-se C com cedilha antes de A, O, U',
+    },
+    {
+      word: 'coracao',
+      display: 'cora___ao',
+      options: ['c', 'ss', 's'],
+      correct: 'c',
+      rule: 'Usa-se C com cedilha antes de A, O, U',
+    },
+    {
+      word: 'pessoa',
+      display: 'pe___oa',
+      options: ['ss', 's', 'c'],
+      correct: 'ss',
+      rule: 'Usa-se SS entre vogais para som de S',
+    },
+    // G / J
+    {
+      word: 'girafa',
+      display: '___irafa',
+      options: ['g', 'j', 'gu'],
+      correct: 'g',
+      rule: 'Usa-se G antes de I e E',
+    },
+    {
+      word: 'jiboia',
+      display: '___iboia',
+      options: ['j', 'g', 'gi'],
+      correct: 'j',
+      rule: 'Usa-se J em palavras de origem indigena',
+    },
+    {
+      word: 'geladeira',
+      display: '___eladeira',
+      options: ['g', 'j', 'gu'],
+      correct: 'g',
+      rule: 'Usa-se G antes de I e E',
+    },
+    {
+      word: 'jiló',
+      display: '___ilo',
+      options: ['j', 'g', 'gi'],
+      correct: 'j',
+      rule: 'Usa-se J em palavras de origem indigena',
+    },
+    {
+      word: 'gelo',
+      display: '___elo',
+      options: ['g', 'j', 'gu'],
+      correct: 'g',
+      rule: 'Usa-se G antes de I e E',
+    },
+    // C / QU
+    {
+      word: 'queijo',
+      display: '___eijo',
+      options: ['qu', 'c', 'k'],
+      correct: 'qu',
+      rule: 'Usa-se QU antes de E e I',
+    },
+    {
+      word: 'cinquenta',
+      display: 'cin___enta',
+      options: ['qu', 'c', 'k'],
+      correct: 'qu',
+      rule: 'Usa-se QU antes de E e I',
+    },
+    {
+      word: 'cama',
+      display: '___ama',
+      options: ['c', 'qu', 'k'],
+      correct: 'c',
+      rule: 'Usa-se C antes de A, O, U',
+    },
+    {
+      word: 'quilo',
+      display: '___ilo',
+      options: ['qu', 'c', 'k'],
+      correct: 'qu',
+      rule: 'Usa-se QU antes de E e I',
+    },
+    {
+      word: 'casa',
+      display: '___asa',
+      options: ['c', 'qu', 'k'],
+      correct: 'c',
+      rule: 'Usa-se C antes de A, O, U',
+    },
+    {
+      word: 'possivel',
+      display: 'po___ivel',
+      options: ['ss', 's', 'c'],
+      correct: 'ss',
+      rule: 'Usa-se SS entre vogais para som de S',
+    },
+  ],
+
+  medium: [
+    // X / CH
+    {
+      word: 'xadrez',
+      display: '___adrez',
+      options: ['x', 'ch', 'sh'],
+      correct: 'x',
+      rule: 'Usa-se X no inicio de palavras',
+    },
+    {
+      word: 'chuva',
+      display: '___uva',
+      options: ['ch', 'x', 'sh'],
+      correct: 'ch',
+      rule: 'Usa-se CH para o som de X em palavras latinas',
+    },
+    {
+      word: 'enxada',
+      display: 'en___ada',
+      options: ['x', 'ch', 'sh'],
+      correct: 'x',
+      rule: 'Usa-se X apos EN',
+    },
+    {
+      word: 'chave',
+      display: '___ave',
+      options: ['ch', 'x', 'sh'],
+      correct: 'ch',
+      rule: 'Usa-se CH para o som de X em palavras latinas',
+    },
+    {
+      word: 'enxergar',
+      display: 'en___ergar',
+      options: ['x', 'ch', 'sh'],
+      correct: 'x',
+      rule: 'Usa-se X apos EN',
+    },
+    {
+      word: 'abacaxi',
+      display: 'abaca___i',
+      options: ['x', 'ch', 'sh'],
+      correct: 'x',
+      rule: 'Usa-se X em palavras de origem indigena',
+    },
+    // Z / S no final
+    {
+      word: 'feliz',
+      display: 'feli___',
+      options: ['z', 's', 'ss'],
+      correct: 'z',
+      rule: 'Adjetivos terminam em Z',
+    },
+    {
+      word: 'atras',
+      display: 'atra___',
+      options: ['s', 'z', 'ss'],
+      correct: 's',
+      rule: 'Adverbios geralmente terminam em S',
+    },
+    {
+      word: 'vez',
+      display: 've___',
+      options: ['z', 's', 'ss'],
+      correct: 'z',
+      rule: 'Substantivos podem terminar em Z',
+    },
+    {
+      word: 'mes',
+      display: 'me___',
+      options: ['s', 'z', 'ss'],
+      correct: 's',
+      rule: 'Palavras derivadas do latim terminam em S',
+    },
+    {
+      word: 'voz',
+      display: 'vo___',
+      options: ['z', 's', 'ss'],
+      correct: 'z',
+      rule: 'Substantivos podem terminar em Z',
+    },
+    // LH / LI
+    {
+      word: 'trabalho',
+      display: 'traba___o',
+      options: ['lh', 'li', 'l'],
+      correct: 'lh',
+      rule: 'Usa-se LH em palavras portuguesas',
+    },
+    {
+      word: 'familia',
+      display: 'fami___a',
+      options: ['li', 'lh', 'l'],
+      correct: 'li',
+      rule: 'Usa-se LI em palavras de origem latina',
+    },
+    {
+      word: 'orelha',
+      display: 'ore___a',
+      options: ['lh', 'li', 'l'],
+      correct: 'lh',
+      rule: 'Usa-se LH em palavras portuguesas',
+    },
+    {
+      word: 'auxiliar',
+      display: 'au___iar',
+      options: ['x', 'ss', 'cs'],
+      correct: 'x',
+      rule: 'Usa-se X com som de KS',
+    },
+    {
+      word: 'chocolate',
+      display: '___ocolate',
+      options: ['ch', 'x', 'sh'],
+      correct: 'ch',
+      rule: 'Usa-se CH para o som de X em palavras latinas',
+    },
+  ],
+
+  hard: [
+    // -CAO / -SSAO
+    {
+      word: 'atencao',
+      display: 'aten___',
+      options: ['cao', 'ssao', 'sao'],
+      correct: 'cao',
+      rule: 'Verbos terminados em TER formam substantivos com CAO',
+    },
+    {
+      word: 'impressao',
+      display: 'impre___',
+      options: ['ssao', 'cao', 'sao'],
+      correct: 'ssao',
+      rule: 'Verbos terminados em IMIR formam substantivos com SSAO',
+    },
+    {
+      word: 'excecao',
+      display: 'exce___',
+      options: ['cao', 'ssao', 'sao'],
+      correct: 'cao',
+      rule: 'Palavras com CEBER formam substantivos com CAO',
+    },
+    {
+      word: 'permissao',
+      display: 'permi___',
+      options: ['ssao', 'cao', 'sao'],
+      correct: 'ssao',
+      rule: 'Verbos terminados em ITIR formam substantivos com SSAO',
+    },
+    {
+      word: 'educacao',
+      display: 'educa___',
+      options: ['cao', 'ssao', 'sao'],
+      correct: 'cao',
+      rule: 'Verbos terminados em CAR formam substantivos com CAO',
+    },
+    {
+      word: 'discussao',
+      display: 'discu___',
+      options: ['ssao', 'cao', 'sao'],
+      correct: 'ssao',
+      rule: 'Verbos terminados em UTIR formam substantivos com SSAO',
+    },
+    // H mudo
+    {
+      word: 'hora',
+      display: '___ora',
+      options: ['h', '', 'rr'],
+      correct: 'h',
+      rule: 'H mudo no inicio de palavras de origem latina',
+    },
+    {
+      word: 'honesto',
+      display: '___onesto',
+      options: ['h', '', 'rr'],
+      correct: 'h',
+      rule: 'H mudo no inicio de palavras de origem latina',
+    },
+    {
+      word: 'humilde',
+      display: '___umilde',
+      options: ['h', '', 'rr'],
+      correct: 'h',
+      rule: 'H mudo no inicio de palavras de origem latina',
+    },
+    {
+      word: 'heroi',
+      display: '___eroi',
+      options: ['h', '', 'rr'],
+      correct: 'h',
+      rule: 'H mudo no inicio de palavras de origem grega',
+    },
+    {
+      word: 'hipopotamo',
+      display: '___ipopotamo',
+      options: ['h', '', 'rr'],
+      correct: 'h',
+      rule: 'H mudo no inicio de palavras de origem grega',
+    },
+    // -ES / -EZ
+    {
+      word: 'portugues',
+      display: 'portugu___',
+      options: ['es', 'ez', 'eis'],
+      correct: 'es',
+      rule: 'Adjetivos patrios terminam em ES',
+    },
+    {
+      word: 'altivez',
+      display: 'altiv___',
+      options: ['ez', 'es', 'eis'],
+      correct: 'ez',
+      rule: 'Substantivos abstratos terminam em EZ',
+    },
+    {
+      word: 'rapidez',
+      display: 'rapid___',
+      options: ['ez', 'es', 'eis'],
+      correct: 'ez',
+      rule: 'Substantivos abstratos derivados de adjetivos terminam em EZ',
+    },
+    {
+      word: 'frances',
+      display: 'franc___',
+      options: ['es', 'ez', 'eis'],
+      correct: 'es',
+      rule: 'Adjetivos patrios terminam em ES',
+    },
+    {
+      word: 'timidez',
+      display: 'timid___',
+      options: ['ez', 'es', 'eis'],
+      correct: 'ez',
+      rule: 'Substantivos abstratos derivados de adjetivos terminam em EZ',
+    },
+    {
+      word: 'expressao',
+      display: 'expre___',
+      options: ['ssao', 'cao', 'sao'],
+      correct: 'ssao',
+      rule: 'Verbos terminados em IMIR formam substantivos com SSAO',
+    },
+  ],
+};
