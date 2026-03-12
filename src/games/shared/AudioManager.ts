@@ -3,10 +3,13 @@ export class AudioManager {
   private soundEnabled = true;
   private narrationEnabled = true;
   private synth: SpeechSynthesis | null = null;
+  private audioCtx: AudioContext | null = null;
+  private voicesLoaded = false;
 
   private constructor() {
     if (typeof window !== 'undefined') {
       this.synth = window.speechSynthesis;
+      this.preloadVoices();
     }
   }
 
@@ -15,6 +18,42 @@ export class AudioManager {
       AudioManager.instance = new AudioManager();
     }
     return AudioManager.instance;
+  }
+
+  /** Call on any user gesture (click/tap) to unlock audio playback */
+  unlock(): void {
+    // Resume or create AudioContext
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
+    } else if (!this.audioCtx) {
+      this.getAudioContext();
+    }
+    // Warm up speech synthesis with a silent utterance
+    if (this.synth) {
+      const silent = new SpeechSynthesisUtterance('');
+      silent.volume = 0;
+      this.synth.speak(silent);
+    }
+  }
+
+  private getAudioContext(): AudioContext {
+    if (!this.audioCtx || this.audioCtx.state === 'closed') {
+      this.audioCtx = new AudioContext();
+    }
+    if (this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
+    }
+    return this.audioCtx;
+  }
+
+  private preloadVoices(): void {
+    if (!this.synth) return;
+    const loadVoices = () => {
+      const voices = this.synth!.getVoices();
+      if (voices.length > 0) this.voicesLoaded = true;
+    };
+    loadVoices();
+    this.synth.addEventListener('voiceschanged', loadVoices);
   }
 
   setSoundEnabled(enabled: boolean) {
@@ -55,7 +94,7 @@ export class AudioManager {
   playTone(frequency: number, duration: number, type: OscillatorType = 'sine'): void {
     if (!this.soundEnabled) return;
     try {
-      const ctx = new AudioContext();
+      const ctx = this.getAudioContext();
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
       oscillator.type = type;

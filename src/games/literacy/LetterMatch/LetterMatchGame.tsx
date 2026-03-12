@@ -62,6 +62,7 @@ export function LetterMatchGame() {
   const [message, setMessage] = useState('');
   const [startedAt] = useState(new Date());
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [started, setStarted] = useState(false);
 
   const config = difficultyRef.current.getConfig();
   const totalRounds = config.itemCount;
@@ -93,13 +94,18 @@ export function LetterMatchGame() {
   }, []);
 
   useEffect(() => {
-    if (currentRound && !gameComplete) {
+    if (currentRound && !gameComplete && started) {
       const timer = setTimeout(() => {
         speakLetter(currentRound.targetLetter);
       }, 400);
       return () => clearTimeout(timer);
     }
-  }, [round, currentRound, gameComplete, speakLetter]);
+  }, [round, currentRound, gameComplete, speakLetter, started]);
+
+  const handleStart = useCallback(() => {
+    audioManager.unlock();
+    setStarted(true);
+  }, []);
 
   const handleSelect = useCallback(
     async (letter: string) => {
@@ -173,6 +179,7 @@ export function LetterMatchGame() {
     setSelectedLetter(null);
     setMessage('');
     setGameComplete(false);
+    setStarted(false);
   }, []);
 
   const handleHint = useCallback(() => {
@@ -194,6 +201,25 @@ export function LetterMatchGame() {
   }
 
   if (!currentRound) return null;
+
+  if (!started) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-6 gap-6 select-none">
+        <span className="text-7xl">🔊</span>
+        <h1 className="text-3xl font-bold text-indigo-700">Letra e Som</h1>
+        <p className="text-lg text-gray-500 text-center">
+          Ouça o som da letra e toque na letra certa!
+        </p>
+        <button
+          onClick={handleStart}
+          className="px-10 py-5 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600
+                     text-white text-2xl font-bold shadow-xl active:scale-95 transition-transform"
+        >
+          Começar 🎵
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col items-center justify-center p-4 gap-4 select-none overflow-y-auto">
