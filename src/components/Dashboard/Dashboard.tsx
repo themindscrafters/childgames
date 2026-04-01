@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../../hooks/useAppContext';
+import { useAuth } from '../../hooks/useAuth';
 import { StudentForm } from '../StudentManager/StudentForm';
-import { deleteStudent, getStudentSessions } from '../../data/db';
-import { GAME_LIST, type GameSession } from '../../data/models';
+import { deleteStudent, getStudentSessions, createInvite, redeemInvite } from '../../data/db';
+import { GAME_LIST, ROLE_LABELS, type GameSession } from '../../data/models';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { getStoredPin, setStoredPin } from '../Layout/PinModal';
 
 export function Dashboard() {
   const { students, refreshStudents } = useApp();
+  const { profile } = useAuth();
+  const labels = ROLE_LABELS[profile?.role ?? 'teacher'];
+
   const [showForm, setShowForm] = useState(false);
-  const [showPinChange, setShowPinChange] = useState(false);
-  const [newPin, setNewPin] = useState('');
-  const [pinMsg, setPinMsg] = useState('');
   const [editStudent, setEditStudent] = useState<typeof students[0] | undefined>();
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [sessions, setSessions] = useState<GameSession[]>([]);
+
+  // Invite state
+  const [inviteCode, setInviteCode] = useState('');
+  const [inviteStudentId, setInviteStudentId] = useState<number | null>(null);
+  const [redeemCode, setRedeemCode] = useState('');
+  const [redeemMsg, setRedeemMsg] = useState('');
 
   useEffect(() => {
     if (selectedStudentId) {
@@ -31,11 +37,29 @@ export function Dashboard() {
     }
   };
 
+  const handleInvite = async (studentId: number) => {
+    const code = await createInvite(studentId);
+    setInviteCode(code);
+    setInviteStudentId(studentId);
+  };
+
+  const handleRedeem = async () => {
+    try {
+      const { studentName } = await redeemInvite(redeemCode);
+      setRedeemMsg(`✅ ${studentName} adicionado(a)!`);
+      setRedeemCode('');
+      await refreshStudents();
+      setTimeout(() => setRedeemMsg(''), 3000);
+    } catch (err: any) {
+      setRedeemMsg(`❌ ${err.message}`);
+    }
+  };
+
   const getGameStats = () => {
-    const stats = GAME_LIST.map((game) => {
-      const gameSessions = sessions.filter((s) => s.gameId === game.id);
-      const totalCorrect = gameSessions.reduce((sum, s) => sum + s.correctAnswers, 0);
-      const totalQuestions = gameSessions.reduce((sum, s) => sum + s.totalQuestions, 0);
+    return GAME_LIST.map((game) => {
+      const gameSessions = sessions.filter((s) => s.game_id === game.id);
+      const totalCorrect = gameSessions.reduce((sum, s) => sum + s.correct_answers, 0);
+      const totalQuestions = gameSessions.reduce((sum, s) => sum + s.total_questions, 0);
       return {
         name: game.name.substring(0, 10),
         acertos: totalCorrect,
@@ -43,7 +67,6 @@ export function Dashboard() {
         sessoes: gameSessions.length,
       };
     }).filter((s) => s.sessoes > 0);
-    return stats;
   };
 
   if (showForm) {
@@ -69,7 +92,7 @@ export function Dashboard() {
       <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h2 style={{ fontFamily: "'Baloo 2', system-ui, sans-serif", fontSize: '1.8rem', fontWeight: 900, color: '#FF6B35' }}>
-            👩‍🏫 Painel do Professor
+            {labels.icon} {labels.title}
           </h2>
           <button
             onClick={() => {
@@ -89,13 +112,14 @@ export function Dashboard() {
               fontFamily: "'Nunito', system-ui, sans-serif",
             }}
           >
-            + Novo Aluno
+            {labels.newChild}
           </button>
         </div>
 
+        {/* Stats cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
           {[
-            { label: 'Total de Alunos', value: students.length, color: '#FF6B35', border: '#FFD0BC', bg: '#FFF0E8' },
+            { label: `Total de ${labels.childLabelPlural}`, value: students.length, color: '#FF6B35', border: '#FFD0BC', bg: '#FFF0E8' },
             { label: 'Sessões Registradas', value: sessions.length, color: '#06D6A0', border: '#B3F0E0', bg: '#E8FFF5' },
             { label: 'Jogos Disponíveis', value: GAME_LIST.length, color: '#FFB703', border: '#FFE58A', bg: '#FFF8E1' },
           ].map(({ label, value, color, border, bg }) => (
@@ -117,7 +141,68 @@ export function Dashboard() {
           ))}
         </div>
 
+        {/* Redeem invite code */}
+        <div
+          style={{
+            background: '#E8F8FF',
+            border: '2px solid #B3E0F0',
+            borderRadius: 18,
+            padding: '16px 20px',
+            boxShadow: '0 4px 0 0 #B3E0F0',
+          }}
+        >
+          <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#0077B6', marginBottom: 10 }}>
+            🔗 Tenho um código de convite
+          </h3>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="text"
+              value={redeemCode}
+              onChange={(e) => { setRedeemCode(e.target.value.toUpperCase()); setRedeemMsg(''); }}
+              placeholder="Ex: ABC123"
+              maxLength={6}
+              style={{
+                flex: 1,
+                padding: '10px 14px',
+                borderRadius: 12,
+                border: '2px solid #B3E0F0',
+                fontSize: '1rem',
+                fontWeight: 700,
+                fontFamily: 'monospace',
+                letterSpacing: 4,
+                textAlign: 'center',
+                outline: 'none',
+                background: '#fff',
+                textTransform: 'uppercase',
+              }}
+            />
+            <button
+              onClick={handleRedeem}
+              disabled={redeemCode.length < 4}
+              style={{
+                padding: '10px 18px',
+                borderRadius: 12,
+                border: 'none',
+                cursor: redeemCode.length >= 4 ? 'pointer' : 'not-allowed',
+                background: redeemCode.length >= 4 ? '#0077B6' : '#B3E0F0',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                boxShadow: redeemCode.length >= 4 ? '0 3px 0 0 #005A8C' : 'none',
+              }}
+            >
+              Usar
+            </button>
+          </div>
+          {redeemMsg && (
+            <p style={{ fontSize: '0.85rem', fontWeight: 700, marginTop: 8, color: redeemMsg.startsWith('✅') ? '#06D6A0' : '#EF233C' }}>
+              {redeemMsg}
+            </p>
+          )}
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+          {/* Student list */}
           <div
             style={{
               background: '#fff',
@@ -128,10 +213,10 @@ export function Dashboard() {
             }}
           >
             <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#3D2C1E', marginBottom: 12 }}>
-              👨‍🎓 Alunos
+              👨‍🎓 {labels.childLabelPlural}
             </h3>
             {students.length === 0 ? (
-              <p style={{ color: '#B09080', fontSize: '0.9rem' }}>Nenhum aluno cadastrado.</p>
+              <p style={{ color: '#B09080', fontSize: '0.9rem' }}>{labels.noChildren}</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {students.map((s) => (
@@ -158,6 +243,13 @@ export function Dashboard() {
                       </p>
                     </div>
                     <button
+                      onClick={(e) => { e.stopPropagation(); handleInvite(s.id!); }}
+                      title="Gerar código de convite"
+                      style={{ fontSize: '0.75rem', color: '#0077B6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}
+                    >
+                      🔗
+                    </button>
+                    <button
                       onClick={(e) => { e.stopPropagation(); setEditStudent(s); setShowForm(true); }}
                       style={{ fontSize: '0.75rem', color: '#FF6B35', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}
                     >
@@ -173,8 +265,39 @@ export function Dashboard() {
                 ))}
               </div>
             )}
+
+            {/* Show invite code if generated */}
+            {inviteCode && (
+              <div
+                style={{
+                  marginTop: 12,
+                  background: '#E8FFF5',
+                  border: '2px solid #06D6A0',
+                  borderRadius: 12,
+                  padding: '12px 16px',
+                  textAlign: 'center',
+                }}
+              >
+                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#06D6A0', marginBottom: 4 }}>
+                  Código de convite para {students.find(s => s.id === inviteStudentId)?.name}:
+                </p>
+                <p style={{
+                  fontFamily: 'monospace',
+                  fontSize: '1.8rem',
+                  fontWeight: 900,
+                  color: '#3D2C1E',
+                  letterSpacing: 6,
+                }}>
+                  {inviteCode}
+                </p>
+                <p style={{ fontSize: '0.75rem', color: '#8B6B55', marginTop: 4 }}>
+                  Válido por 7 dias. Compartilhe com outro responsável.
+                </p>
+              </div>
+            )}
           </div>
 
+          {/* Progress chart */}
           <div
             style={{
               background: '#fff',
@@ -185,7 +308,7 @@ export function Dashboard() {
             }}
           >
             <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#3D2C1E', marginBottom: 12 }}>
-              📊 {selectedStudentId ? `Progresso — ${students.find((s) => s.id === selectedStudentId)?.name}` : 'Selecione um aluno'}
+              📊 {selectedStudentId ? `Progresso — ${students.find((s) => s.id === selectedStudentId)?.name}` : `Selecione um ${labels.childLabel.toLowerCase()}`}
             </h3>
             {selectedStudentId && sessions.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
@@ -199,85 +322,11 @@ export function Dashboard() {
               </ResponsiveContainer>
             ) : (
               <p style={{ color: '#B09080', fontSize: '0.9rem' }}>
-                {selectedStudentId ? 'Nenhuma sessão registrada.' : 'Clique em um aluno para ver o progresso.'}
+                {selectedStudentId ? 'Nenhuma sessão registrada.' : `Clique em um ${labels.childLabel.toLowerCase()} para ver o progresso.`}
               </p>
             )}
           </div>
         </div>
-
-        {/* Segurança — alterar PIN */}
-        <div
-          style={{
-            background: '#fff',
-            border: '2px solid #F0EAE4',
-            borderRadius: 18,
-            padding: '20px',
-            boxShadow: '0 4px 0 0 #F0EAE4, 0 6px 20px rgba(0,0,0,0.04)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: showPinChange ? 14 : 0 }}>
-            <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#3D2C1E' }}>
-              🔒 PIN do Modo Professor
-            </h3>
-            <button
-              onClick={() => { setShowPinChange(!showPinChange); setNewPin(''); setPinMsg(''); }}
-              style={{
-                fontSize: '0.8rem', fontWeight: 800, color: '#FF6B35',
-                background: 'none', border: 'none', cursor: 'pointer',
-              }}
-            >
-              {showPinChange ? 'Cancelar' : 'Alterar PIN'}
-            </button>
-          </div>
-
-          {showPinChange && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <p style={{ fontSize: '0.8rem', color: '#8B6B55', fontWeight: 600 }}>
-                PIN atual: <strong style={{ fontFamily: 'monospace', letterSpacing: 4 }}>{'•'.repeat(getStoredPin().length)}</strong>
-              </p>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <input
-                  type="password"
-                  inputMode="numeric"
-                  maxLength={4}
-                  placeholder="Novo PIN (4 dígitos)"
-                  value={newPin}
-                  onChange={(e) => { setNewPin(e.target.value.replace(/\D/g, '').slice(0, 4)); setPinMsg(''); }}
-                  style={{
-                    flex: 1, padding: '10px 14px', borderRadius: 12,
-                    border: '2px solid #FFD0BC', fontSize: '1rem',
-                    fontFamily: "'Nunito', system-ui, sans-serif", fontWeight: 700,
-                    outline: 'none', background: '#FFF8F5', letterSpacing: 6,
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    if (newPin.length !== 4) { setPinMsg('O PIN deve ter 4 dígitos.'); return; }
-                    setStoredPin(newPin);
-                    setPinMsg('✅ PIN alterado com sucesso!');
-                    setNewPin('');
-                    setTimeout(() => { setShowPinChange(false); setPinMsg(''); }, 1500);
-                  }}
-                  style={{
-                    padding: '10px 18px', borderRadius: 12, border: 'none', cursor: 'pointer',
-                    background: 'linear-gradient(135deg, #FF6B35, #FF9A6C)',
-                    color: '#fff', fontWeight: 800, fontSize: '0.9rem',
-                    boxShadow: '0 4px 0 0 #E04E18',
-                    fontFamily: "'Baloo 2', sans-serif",
-                  }}
-                >
-                  Salvar
-                </button>
-              </div>
-              {pinMsg && (
-                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: pinMsg.startsWith('✅') ? '#06D6A0' : '#EF233C' }}>
-                  {pinMsg}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
       </div>
     </div>
   );

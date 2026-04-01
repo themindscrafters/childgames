@@ -82,7 +82,7 @@ const SLOT_BG_FILLED = '#4F46E5';
 export function WordBuilderGame() {
   const { currentStudent } = useApp();
   const difficultyRef = useRef(
-    new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy')
+    new DifficultyManager(currentStudent?.current_difficulty ?? 'easy')
   );
   const rewardRef = useRef(new RewardSystem());
 
@@ -95,7 +95,7 @@ export function WordBuilderGame() {
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | 'complete' | null>(null);
   const [gameComplete, setGameComplete] = useState(false);
   const [message, setMessage] = useState('');
-  const [startedAt] = useState(new Date());
+  const [startedAt] = useState(new Date().toISOString());
   const [shakeIndex, setShakeIndex] = useState<number | null>(null);
   const [hintIndex, setHintIndex] = useState<number | null>(null);
 
@@ -185,16 +185,16 @@ export function WordBuilderGame() {
     setGameComplete(true);
     if (currentStudent?.id) {
       await saveSession({
-        studentId: currentStudent.id,
-        gameId: 'word-builder',
-        startedAt,
-        endedAt: new Date(),
+        student_id: currentStudent.id,
+        game_id: 'word-builder',
+        started_at: startedAt,
+        ended_at: new Date().toISOString(),
         difficulty: difficultyRef.current.getDifficulty(),
         score,
-        totalQuestions: totalRounds,
-        correctAnswers: score,
+        total_questions: totalRounds,
+        correct_answers: score,
         attempts,
-        hintsUsed,
+        hints_used: hintsUsed,
         completed: true,
       });
     }

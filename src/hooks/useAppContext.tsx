@@ -1,31 +1,42 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { Student } from '../data/models';
 import { getStudents } from '../data/db';
+import { useAuth } from './useAuth';
 
 interface AppContextType {
   currentStudent: Student | null;
   setCurrentStudent: (student: Student | null) => void;
   students: Student[];
   refreshStudents: () => Promise<void>;
-  isTeacherMode: boolean;
-  setTeacherMode: (v: boolean) => void;
+  loading: boolean;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
   const [students, setStudents] = useState<Student[]>([]);
-  const [isTeacherMode, setTeacherMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const refreshStudents = async () => {
-    const list = await getStudents();
-    setStudents(list);
+    if (!user) {
+      setStudents([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      const list = await getStudents();
+      setStudents(list);
+    } catch (err) {
+      console.error('Error fetching students:', err);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
     refreshStudents();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (currentStudent?.settings) {
@@ -44,8 +55,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCurrentStudent,
         students,
         refreshStudents,
-        isTeacherMode,
-        setTeacherMode,
+        loading,
       }}
     >
       {children}

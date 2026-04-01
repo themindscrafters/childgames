@@ -18,7 +18,7 @@ const THEME_BORDER = '#C7D2FE';
 export function TextComprehensionGame() {
   const { currentStudent } = useApp();
   const difficultyManager = useRef(
-    new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy')
+    new DifficultyManager(currentStudent?.current_difficulty ?? 'easy')
   ).current;
   const rewardSystem = useRef(new RewardSystem()).current;
 
@@ -131,16 +131,16 @@ export function TextComprehensionGame() {
       setGameComplete(true);
       if (currentStudent?.id) {
         await saveSession({
-          studentId: currentStudent.id,
-          gameId: 'text-comprehension',
-          startedAt: startTime.current,
-          endedAt: new Date(),
+          student_id: currentStudent.id,
+          game_id: 'text-comprehension',
+          started_at: startTime.current.toISOString(),
+          ended_at: new Date().toISOString(),
           difficulty: difficultyManager.getDifficulty(),
           score: finalScore,
-          totalQuestions: TOTAL_ROUNDS,
-          correctAnswers: finalScore,
+          total_questions: TOTAL_ROUNDS,
+          correct_answers: finalScore,
           attempts,
-          hintsUsed,
+          hints_used: hintsUsed,
           completed: true,
         });
       }

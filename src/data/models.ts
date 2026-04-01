@@ -6,13 +6,23 @@ export type GameCategory = 'literacy' | 'math' | 'memory' | 'motor' | 'social' |
 
 export type GradeLevel = 'early' | '5ano';
 
+export type UserRole = 'teacher' | 'parent';
+
+export interface Profile {
+  id: string;
+  name: string;
+  role: UserRole;
+  created_at: string;
+}
+
 export interface Student {
   id?: number;
   name: string;
   avatar: string;
   difficulties: LearningDifficulty[];
-  currentDifficulty: Difficulty;
-  createdAt: Date;
+  current_difficulty: Difficulty;
+  created_at: string;
+  created_by?: string;
   settings: StudentSettings;
 }
 
@@ -28,17 +38,27 @@ export interface StudentSettings {
 
 export interface GameSession {
   id?: number;
-  studentId: number;
-  gameId: string;
-  startedAt: Date;
-  endedAt?: Date;
+  student_id: number;
+  game_id: string;
+  started_at: string;
+  ended_at?: string;
   difficulty: Difficulty;
   score: number;
-  totalQuestions: number;
-  correctAnswers: number;
+  total_questions: number;
+  correct_answers: number;
   attempts: number;
-  hintsUsed: number;
+  hints_used: number;
   completed: boolean;
+}
+
+export interface Invite {
+  id?: number;
+  code: string;
+  student_id: number;
+  created_by: string;
+  expires_at: string;
+  used_by?: string;
+  used_at?: string;
 }
 
 export interface GameInfo {
@@ -286,3 +306,30 @@ export const AVATARS = [
   { id: 'rainbow', emoji: '\uD83C\uDF08', label: 'Arco-iris' },
   { id: 'butterfly', emoji: '\uD83E\uDD8B', label: 'Borboleta' },
 ];
+
+export const ROLE_LABELS = {
+  teacher: {
+    title: 'Painel do Professor',
+    childLabel: 'Aluno',
+    childLabelPlural: 'Alunos',
+    newChild: '+ Novo Aluno',
+    noChildren: 'Nenhum aluno cadastrado.',
+    formTitle: 'Novo Aluno',
+    formEditTitle: 'Editar Aluno',
+    nameLabel: 'Nome do aluno',
+    namePlaceholder: 'Ex: Maria, João...',
+    icon: '👩‍🏫',
+  },
+  parent: {
+    title: 'Painel do Responsável',
+    childLabel: 'Filho(a)',
+    childLabelPlural: 'Meus Filhos',
+    newChild: '+ Novo Filho',
+    noChildren: 'Nenhum filho cadastrado.',
+    formTitle: 'Novo Filho',
+    formEditTitle: 'Editar Filho',
+    nameLabel: 'Nome do filho(a)',
+    namePlaceholder: 'Ex: Lucas, Ana...',
+    icon: '👨‍👩‍👧‍👦',
+  },
+};

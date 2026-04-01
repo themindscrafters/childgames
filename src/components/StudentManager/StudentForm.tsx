@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { AVATARS, DEFAULT_STUDENT_SETTINGS, type LearningDifficulty, type Student } from '../../data/models';
+import { AVATARS, DEFAULT_STUDENT_SETTINGS, ROLE_LABELS, type LearningDifficulty, type Student } from '../../data/models';
 import { addStudent, updateStudent } from '../../data/db';
 import { useApp } from '../../hooks/useAppContext';
+import { useAuth } from '../../hooks/useAuth';
 
 const DIFFICULTIES: { value: LearningDifficulty; label: string; emoji: string; color: string; bg: string; border: string }[] = [
   { value: 'dyslexia',    label: 'Dislexia',          emoji: '📖', color: '#FF6FA8', bg: '#FFF0F6', border: '#FF6FA8' },
@@ -20,6 +21,8 @@ interface Props {
 
 export function StudentForm({ student, onSaved, onCancel }: Props) {
   const { refreshStudents } = useApp();
+  const { profile } = useAuth();
+  const labels = ROLE_LABELS[profile?.role ?? 'teacher'];
   const [name, setName] = useState(student?.name ?? '');
   const [avatar, setAvatar] = useState(student?.avatar ?? AVATARS[0].emoji);
   const [difficulties, setDifficulties] = useState<LearningDifficulty[]>(
@@ -46,8 +49,8 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
         name: name.trim(),
         avatar,
         difficulties,
-        currentDifficulty: 'easy',
-        createdAt: new Date(),
+        current_difficulty: 'easy',
+        created_at: new Date().toISOString(),
         settings: { ...DEFAULT_STUDENT_SETTINGS },
       });
     }
@@ -76,7 +79,7 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
           marginBottom: 20,
         }}
       >
-        {student ? '✏️ Editar Aluno' : '🌟 Novo Aluno'}
+        {student ? `✏️ ${labels.formEditTitle}` : `🌟 ${labels.formTitle}`}
       </h3>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -84,13 +87,13 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
         {/* Nome */}
         <div>
           <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#8B6B55', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Nome do aluno
+            {labels.nameLabel}
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: Maria, João..."
+            placeholder={labels.namePlaceholder}
             autoFocus
             style={{
               width: '100%',

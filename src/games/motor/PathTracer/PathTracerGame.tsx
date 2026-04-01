@@ -208,7 +208,7 @@ const TOLERANCE: Record<Difficulty, number> = {
 
 export function PathTracerGame() {
   const { currentStudent } = useApp();
-  const difficultyRef = useRef(new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy'));
+  const difficultyRef = useRef(new DifficultyManager(currentStudent?.current_difficulty ?? 'easy'));
   const rewardRef = useRef(new RewardSystem());
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -439,16 +439,16 @@ export function PathTracerGame() {
               setGameComplete(true);
               if (currentStudent?.id) {
                 await saveSession({
-                  studentId: currentStudent.id,
-                  gameId: 'path-tracer',
-                  startedAt: startTimeRef.current,
-                  endedAt: new Date(),
+                  student_id: currentStudent.id,
+                  game_id: 'path-tracer',
+                  started_at: startTimeRef.current?.toISOString() ?? new Date().toISOString(),
+                  ended_at: new Date().toISOString(),
                   difficulty: difficultyRef.current.getDifficulty(),
                   score: score + Math.round(progress / 10) * 10,
-                  totalQuestions: totalRounds,
-                  correctAnswers: newRounds,
+                  total_questions: totalRounds,
+                  correct_answers: newRounds,
                   attempts: attempts + 1,
-                  hintsUsed: 0,
+                  hints_used: 0,
                   completed: true,
                 });
               }

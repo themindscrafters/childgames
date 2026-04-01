@@ -65,7 +65,7 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 export function EmotionMatchGame() {
   const { currentStudent } = useApp();
-  const difficultyRef = useRef(new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy'));
+  const difficultyRef = useRef(new DifficultyManager(currentStudent?.current_difficulty ?? 'easy'));
   const rewardRef = useRef(new RewardSystem());
 
   const [, setDifficulty] = useState<Difficulty>(difficultyRef.current.getDifficulty());
@@ -170,16 +170,16 @@ export function EmotionMatchGame() {
             setGameComplete(true);
             if (currentStudent?.id) {
               await saveSession({
-                studentId: currentStudent.id,
-                gameId: 'emotion-match',
-                startedAt: startTimeRef.current,
-                endedAt: new Date(),
+                student_id: currentStudent.id,
+                game_id: 'emotion-match',
+                started_at: startTimeRef.current?.toISOString() ?? new Date().toISOString(),
+                ended_at: new Date().toISOString(),
                 difficulty: difficultyRef.current.getDifficulty(),
                 score: score + 10,
-                totalQuestions: totalRounds,
-                correctAnswers: correctAnswers + 1,
+                total_questions: totalRounds,
+                correct_answers: correctAnswers + 1,
                 attempts: attempts + 1,
-                hintsUsed: 0,
+                hints_used: 0,
                 completed: true,
               });
             }

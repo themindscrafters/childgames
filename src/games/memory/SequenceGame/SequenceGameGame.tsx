@@ -32,7 +32,7 @@ type Phase = 'idle' | 'showing' | 'input' | 'wrong' | 'levelUp' | 'complete';
 
 export function SequenceGameGame() {
   const { currentStudent } = useApp();
-  const difficultyRef = useRef(new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy'));
+  const difficultyRef = useRef(new DifficultyManager(currentStudent?.current_difficulty ?? 'easy'));
   const rewardRef = useRef(new RewardSystem());
 
   const [phase, setPhase] = useState<Phase>('idle');
@@ -167,16 +167,16 @@ export function SequenceGameGame() {
             setGameComplete(true);
             if (currentStudent?.id) {
               await saveSession({
-                studentId: currentStudent.id,
-                gameId: 'sequence-game',
-                startedAt: startTimeRef.current,
-                endedAt: new Date(),
+                student_id: currentStudent.id,
+                game_id: 'sequence-game',
+                started_at: startTimeRef.current?.toISOString() ?? new Date().toISOString(),
+                ended_at: new Date().toISOString(),
                 difficulty: difficultyRef.current.getDifficulty(),
                 score: score + sequenceLength * 10,
-                totalQuestions: maxLength - LEVEL_CONFIG[difficulty].startLength + 1,
-                correctAnswers: correctAnswers + 1,
+                total_questions: maxLength - LEVEL_CONFIG[difficulty].startLength + 1,
+                correct_answers: correctAnswers + 1,
                 attempts: attempts + 1,
-                hintsUsed: 0,
+                hints_used: 0,
                 completed: true,
               });
             }

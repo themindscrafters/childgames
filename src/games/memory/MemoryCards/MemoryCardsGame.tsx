@@ -37,7 +37,7 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 export function MemoryCardsGame() {
   const { currentStudent } = useApp();
-  const difficultyRef = useRef(new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy'));
+  const difficultyRef = useRef(new DifficultyManager(currentStudent?.current_difficulty ?? 'easy'));
   const rewardRef = useRef(new RewardSystem());
 
   const [cards, setCards] = useState<Card[]>([]);
@@ -137,16 +137,16 @@ export function MemoryCardsGame() {
                   setGameComplete(true);
                   if (currentStudent?.id) {
                     await saveSession({
-                      studentId: currentStudent.id,
-                      gameId: 'memory-cards',
-                      startedAt: startTimeRef.current,
-                      endedAt: new Date(),
+                      student_id: currentStudent.id,
+                      game_id: 'memory-cards',
+                      started_at: startTimeRef.current?.toISOString() ?? new Date().toISOString(),
+                      ended_at: new Date().toISOString(),
                       difficulty: difficultyRef.current.getDifficulty(),
                       score: score + 10,
-                      totalQuestions: totalPairs,
-                      correctAnswers: newMatched,
+                      total_questions: totalPairs,
+                      correct_answers: newMatched,
                       attempts: attempts + 1,
-                      hintsUsed: 0,
+                      hints_used: 0,
                       completed: true,
                     });
                   }

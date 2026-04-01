@@ -69,7 +69,7 @@ function generateObjectPositions(count: number): { x: number; y: number; delay: 
 export function CountingAdventureGame() {
   const { currentStudent } = useApp();
   const difficultyManager = useRef(
-    new DifficultyManager(currentStudent?.currentDifficulty ?? 'easy')
+    new DifficultyManager(currentStudent?.current_difficulty ?? 'easy')
   ).current;
   const rewardSystem = useRef(new RewardSystem()).current;
 
@@ -160,16 +160,16 @@ export function CountingAdventureGame() {
       setGameComplete(true);
       if (currentStudent?.id) {
         await saveSession({
-          studentId: currentStudent.id,
-          gameId: 'counting-adventure',
-          startedAt: startTime.current,
-          endedAt: new Date(),
+          student_id: currentStudent.id,
+          game_id: 'counting-adventure',
+          started_at: startTime.current.toISOString(),
+          ended_at: new Date().toISOString(),
           difficulty: difficultyManager.getDifficulty(),
           score: finalScore,
-          totalQuestions: TOTAL_ROUNDS,
-          correctAnswers: finalScore,
+          total_questions: TOTAL_ROUNDS,
+          correct_answers: finalScore,
           attempts,
-          hintsUsed,
+          hints_used: hintsUsed,
           completed: true,
         });
       }
