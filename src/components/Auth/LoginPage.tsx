@@ -17,9 +17,14 @@ export function LoginPage() {
 
     const result = await signIn(email, password);
     if (result.error) {
-      setError(result.error === 'Invalid login credentials'
-        ? 'E-mail ou senha incorretos'
-        : result.error);
+      const errorMap: Record<string, string> = {
+        'Invalid login credentials': 'E-mail ou senha incorretos',
+        'Email not confirmed': 'Confirme seu e-mail antes de entrar',
+        'Too many requests': 'Muitas tentativas. Aguarde um momento.',
+      };
+      const friendlyError = Object.entries(errorMap).find(([k]) => result.error!.includes(k))?.[1]
+        ?? 'Erro ao entrar. Tente novamente.';
+      setError(friendlyError);
       setLoading(false);
     } else {
       navigate('/');
@@ -29,10 +34,12 @@ export function LoginPage() {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
         padding: '24px 20px',
         background: `
           radial-gradient(ellipse at 20% 20%, rgba(255,107,53,0.08) 0%, transparent 50%),

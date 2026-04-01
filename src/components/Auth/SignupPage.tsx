@@ -40,15 +40,20 @@ export function SignupPage() {
     setError('');
     setLoading(true);
 
-    if (password.length < 6) {
-      setError('A senha precisa ter pelo menos 6 caracteres');
+    if (password.length < 8) {
+      setError('A senha precisa ter pelo menos 8 caracteres');
+      setLoading(false);
+      return;
+    }
+    if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      setError('A senha precisa ter pelo menos uma letra e um número');
       setLoading(false);
       return;
     }
 
     const result = await signUp(email, password, name, role);
     if (result.error) {
-      setError(result.error);
+      setError(sanitizeError(result.error));
       setLoading(false);
     } else {
       setSuccess(true);
@@ -104,11 +109,13 @@ export function SignupPage() {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '24px 20px',
+        padding: '32px 20px 48px',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
         background: `
           radial-gradient(ellipse at 20% 20%, rgba(255,107,53,0.08) 0%, transparent 50%),
           radial-gradient(ellipse at 80% 80%, rgba(255,183,3,0.06) 0%, transparent 50%),
@@ -271,9 +278,9 @@ export function SignupPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 8 caracteres (letra + número)"
               required
-              minLength={6}
+              minLength={8}
               style={{ ...inputStyle, letterSpacing: 3 }}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -347,6 +354,19 @@ export function SignupPage() {
       </div>
     </div>
   );
+}
+
+function sanitizeError(msg: string): string {
+  const map: Record<string, string> = {
+    'User already registered': 'Já existe uma conta com este e-mail',
+    'Invalid email': 'E-mail inválido',
+    'Password should be at least': 'A senha precisa ter pelo menos 8 caracteres',
+    'Signup requires a valid password': 'Senha inválida',
+  };
+  for (const [key, value] of Object.entries(map)) {
+    if (msg.includes(key)) return value;
+  }
+  return 'Erro ao criar conta. Tente novamente.';
 }
 
 // Shared styles

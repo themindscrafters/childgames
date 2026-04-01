@@ -125,7 +125,9 @@ export async function createInvite(studentId: number): Promise<string> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const array = new Uint8Array(6);
+  crypto.getRandomValues(array);
+  const code = Array.from(array, b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
 
