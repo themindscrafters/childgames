@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import type { UserRole } from '../../data/models';
 
@@ -26,7 +26,6 @@ const ROLES: { value: UserRole; label: string; icon: string; description: string
 
 export function SignupPage() {
   const { signUp } = useAuth();
-  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,7 +56,6 @@ export function SignupPage() {
       setLoading(false);
     } else {
       setSuccess(true);
-      setTimeout(() => navigate('/'), 1500);
     }
   };
 
@@ -86,7 +84,7 @@ export function SignupPage() {
             width: '100%',
           }}
         >
-          <div style={{ fontSize: '4rem', marginBottom: 12 }}>🎉</div>
+          <div style={{ fontSize: '4rem', marginBottom: 12 }}>📧</div>
           <h2
             style={{
               fontFamily: "'Baloo 2', system-ui, sans-serif",
@@ -96,11 +94,26 @@ export function SignupPage() {
               marginBottom: 8,
             }}
           >
-            Conta criada!
+            Quase lá!
           </h2>
-          <p style={{ color: '#8B6B55', fontWeight: 600, fontFamily: "'Nunito', sans-serif" }}>
-            Redirecionando...
+          <p style={{ color: '#8B6B55', fontWeight: 600, fontFamily: "'Nunito', sans-serif", lineHeight: 1.5 }}>
+            Enviamos um e-mail de confirmação.<br />
+            Clique no link para ativar sua conta.
           </p>
+          <Link
+            to="/login"
+            style={{
+              display: 'inline-block',
+              marginTop: 16,
+              color: '#FF6B35',
+              fontWeight: 800,
+              fontFamily: "'Nunito', sans-serif",
+              textDecoration: 'none',
+              borderBottom: '2px solid rgba(255,107,53,0.3)',
+            }}
+          >
+            Ir para o login
+          </Link>
         </div>
       </div>
     );
@@ -122,20 +135,14 @@ export function SignupPage() {
           linear-gradient(180deg, #FFF8F2 0%, #FFF0E8 100%)
         `,
         position: 'relative',
-        overflow: 'hidden',
       }}
     >
-      {/* Floating decorative elements */}
-      <div style={{ position: 'absolute', top: '6%', right: '8%', fontSize: '2.5rem', opacity: 0.12, transform: 'rotate(15deg)' }}>🌟</div>
-      <div style={{ position: 'absolute', bottom: '10%', left: '6%', fontSize: '2rem', opacity: 0.1, transform: 'rotate(-20deg)' }}>🎨</div>
-      <div style={{ position: 'absolute', top: '50%', right: '3%', fontSize: '1.8rem', opacity: 0.08 }}>🧸</div>
-
       <div
         className="animate-bounce-in"
         style={{
           background: '#fff',
           borderRadius: 28,
-          padding: '36px 28px 32px',
+          padding: '24px 20px 24px',
           width: '100%',
           maxWidth: 440,
           border: '2px solid #FFD0BC',
@@ -145,12 +152,12 @@ export function SignupPage() {
         }}
       >
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div className="animate-float" style={{ fontSize: '3rem', marginBottom: 6, display: 'inline-block' }}>🌈</div>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}>
+          <div style={{ fontSize: '2rem', marginBottom: 4, display: 'inline-block' }}>🌈</div>
           <h1
             style={{
               fontFamily: "'Baloo 2', system-ui, sans-serif",
-              fontSize: '1.7rem',
+              fontSize: '1.4rem',
               fontWeight: 900,
               background: 'linear-gradient(135deg, #FF6B35, #FFB703)',
               WebkitBackgroundClip: 'text',

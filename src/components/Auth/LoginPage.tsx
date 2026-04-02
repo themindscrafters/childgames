@@ -47,7 +47,6 @@ export function LoginPage() {
           linear-gradient(180deg, #FFF8F2 0%, #FFF0E8 100%)
         `,
         position: 'relative',
-        overflow: 'hidden',
       }}
     >
       {/* Floating decorative elements */}
@@ -173,7 +172,7 @@ export function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              minLength={6}
+              minLength={8}
               style={{
                 width: '100%',
                 padding: '14px 16px',

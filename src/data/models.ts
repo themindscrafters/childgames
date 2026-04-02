@@ -1,7 +1,5 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
-export type LearningDifficulty = 'dyslexia' | 'dyscalculia' | 'adhd' | 'autism' | 'dyspraxia' | 'none';
-
 export type GameCategory = 'literacy' | 'math' | 'memory' | 'motor' | 'social' | 'portugues' | 'matematica' | 'ciencias' | 'geografia-historia';
 
 export type GradeLevel = 'early' | '5ano';
@@ -12,14 +10,40 @@ export interface Profile {
   id: string;
   name: string;
   role: UserRole;
+  pin: string | null;
+  is_admin: boolean;
   created_at: string;
+}
+
+export interface AdminStats {
+  total_users: number;
+  users_by_role: Record<string, number>;
+  total_students: number;
+  total_sessions: number;
+  sessions_today: number;
+  sessions_last_7d: number;
+  sessions_last_30d: number;
+  active_users_7d: number;
+  avg_accuracy: number;
+  avg_session_minutes: number;
+  top_games: { game_id: string; plays: number; avg_accuracy: number }[];
+  daily_sessions: { date: string; sessions: number; unique_students: number }[];
+  signups_last_7d: number;
+}
+
+export interface AdminFeedback {
+  total: number;
+  avg_rating: number;
+  rating_distribution: Record<string, number>;
+  recent: { id: number; rating: number; message: string | null; page: string | null; created_at: string; user_role: string }[];
+  last_7d: number;
+  avg_rating_7d: number;
 }
 
 export interface Student {
   id?: number;
   name: string;
   avatar: string;
-  difficulties: LearningDifficulty[];
   current_difficulty: Difficulty;
   created_at: string;
   created_by?: string;
@@ -68,7 +92,6 @@ export interface GameInfo {
   category: GameCategory;
   icon: string;
   color: string;
-  targetDifficulties: LearningDifficulty[];
   gradeLevel: GradeLevel;
 }
 
@@ -80,7 +103,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'literacy',
     icon: 'Aa',
     color: '#4F46E5',
-    targetDifficulties: ['dyslexia'],
+
     gradeLevel: 'early',
   },
   {
@@ -90,7 +113,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'literacy',
     icon: 'BA',
     color: '#7C3AED',
-    targetDifficulties: ['dyslexia'],
+
     gradeLevel: 'early',
   },
   {
@@ -100,7 +123,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'literacy',
     icon: 'ABC',
     color: '#6366F1',
-    targetDifficulties: ['dyslexia'],
+
     gradeLevel: 'early',
   },
   {
@@ -110,7 +133,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'math',
     icon: '123',
     color: '#10B981',
-    targetDifficulties: ['dyscalculia'],
+
     gradeLevel: 'early',
   },
   {
@@ -120,7 +143,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'math',
     icon: '#',
     color: '#059669',
-    targetDifficulties: ['dyscalculia', 'adhd'],
+
     gradeLevel: 'early',
   },
   {
@@ -130,7 +153,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'math',
     icon: '[]',
     color: '#14B8A6',
-    targetDifficulties: ['dyscalculia', 'dyspraxia'],
+
     gradeLevel: 'early',
   },
   {
@@ -140,7 +163,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'memory',
     icon: '??',
     color: '#F59E0B',
-    targetDifficulties: ['adhd', 'autism'],
+
     gradeLevel: 'early',
   },
   {
@@ -150,7 +173,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'memory',
     icon: '>>',
     color: '#D97706',
-    targetDifficulties: ['adhd'],
+
     gradeLevel: 'early',
   },
   {
@@ -160,7 +183,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'motor',
     icon: '~',
     color: '#EC4899',
-    targetDifficulties: ['dyspraxia'],
+
     gradeLevel: 'early',
   },
   {
@@ -170,7 +193,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'social',
     icon: ':)',
     color: '#F472B6',
-    targetDifficulties: ['autism'],
+
     gradeLevel: 'early',
   },
   // === 5º Ano - Fundamental I ===
@@ -181,7 +204,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'matematica',
     icon: '🍕',
     color: '#059669',
-    targetDifficulties: ['dyscalculia'],
+
     gradeLevel: '5ano',
   },
   {
@@ -191,7 +214,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'matematica',
     icon: '✖️',
     color: '#10B981',
-    targetDifficulties: ['dyscalculia'],
+
     gradeLevel: '5ano',
   },
   {
@@ -201,7 +224,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'matematica',
     icon: '💰',
     color: '#14B8A6',
-    targetDifficulties: ['dyscalculia'],
+
     gradeLevel: '5ano',
   },
   {
@@ -211,7 +234,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'portugues',
     icon: '📝',
     color: '#6366F1',
-    targetDifficulties: ['dyslexia'],
+
     gradeLevel: '5ano',
   },
   {
@@ -221,7 +244,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'portugues',
     icon: '✏️',
     color: '#7C3AED',
-    targetDifficulties: ['dyslexia'],
+
     gradeLevel: '5ano',
   },
   {
@@ -231,7 +254,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'portugues',
     icon: '📖',
     color: '#4F46E5',
-    targetDifficulties: ['dyslexia', 'adhd'],
+
     gradeLevel: '5ano',
   },
   {
@@ -241,7 +264,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'ciencias',
     icon: '🪐',
     color: '#F59E0B',
-    targetDifficulties: ['none'],
+
     gradeLevel: '5ano',
   },
   {
@@ -251,7 +274,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'ciencias',
     icon: '🫀',
     color: '#EF4444',
-    targetDifficulties: ['none'],
+
     gradeLevel: '5ano',
   },
   {
@@ -261,7 +284,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'ciencias',
     icon: '💧',
     color: '#0284C7',
-    targetDifficulties: ['none'],
+
     gradeLevel: '5ano',
   },
   {
@@ -271,7 +294,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'geografia-historia',
     icon: '🗺️',
     color: '#06B6D4',
-    targetDifficulties: ['none'],
+
     gradeLevel: '5ano',
   },
   {
@@ -281,7 +304,7 @@ export const GAME_LIST: GameInfo[] = [
     category: 'geografia-historia',
     icon: '⏳',
     color: '#D97706',
-    targetDifficulties: ['none'],
+
     gradeLevel: '5ano',
   },
 ];

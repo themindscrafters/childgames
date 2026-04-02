@@ -1,17 +1,8 @@
 import { useState } from 'react';
-import { AVATARS, DEFAULT_STUDENT_SETTINGS, ROLE_LABELS, type LearningDifficulty, type Student } from '../../data/models';
+import { AVATARS, DEFAULT_STUDENT_SETTINGS, ROLE_LABELS, type Student } from '../../data/models';
 import { addStudent, updateStudent } from '../../data/db';
 import { useApp } from '../../hooks/useAppContext';
 import { useAuth } from '../../hooks/useAuth';
-
-const DIFFICULTIES: { value: LearningDifficulty; label: string; emoji: string; color: string; bg: string; border: string }[] = [
-  { value: 'dyslexia',    label: 'Dislexia',          emoji: '📖', color: '#FF6FA8', bg: '#FFF0F6', border: '#FF6FA8' },
-  { value: 'dyscalculia', label: 'Discalculia',        emoji: '🔢', color: '#00B4D8', bg: '#E8F8FF', border: '#00B4D8' },
-  { value: 'adhd',        label: 'TDAH',               emoji: '⚡', color: '#FFB703', bg: '#FFF8E1', border: '#FFB703' },
-  { value: 'autism',      label: 'Autismo (TEA)',       emoji: '🧩', color: '#7B5EA7', bg: '#F3EEFF', border: '#7B5EA7' },
-  { value: 'dyspraxia',   label: 'Dispraxia',          emoji: '✍️', color: '#FF6B35', bg: '#FFF0E8', border: '#FF6B35' },
-  { value: 'none',        label: 'Nenhuma específica', emoji: '😊', color: '#06D6A0', bg: '#E8FFF5', border: '#06D6A0' },
-];
 
 interface Props {
   student?: Student;
@@ -25,30 +16,16 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
   const labels = ROLE_LABELS[profile?.role ?? 'teacher'];
   const [name, setName] = useState(student?.name ?? '');
   const [avatar, setAvatar] = useState(student?.avatar ?? AVATARS[0].emoji);
-  const [difficulties, setDifficulties] = useState<LearningDifficulty[]>(
-    student?.difficulties ?? []
-  );
-
-  const toggleDifficulty = (d: LearningDifficulty) => {
-    if (d === 'none') {
-      setDifficulties(['none']);
-      return;
-    }
-    setDifficulties((prev) => {
-      const filtered = prev.filter((x) => x !== 'none');
-      return filtered.includes(d) ? filtered.filter((x) => x !== d) : [...filtered, d];
-    });
-  };
 
   const handleSave = async () => {
-    if (!name.trim()) return;
+    const trimmed = name.trim();
+    if (!trimmed || trimmed.length > 30) return;
     if (student?.id) {
-      await updateStudent(student.id, { name: name.trim(), avatar, difficulties });
+      await updateStudent(student.id, { name: trimmed, avatar });
     } else {
       await addStudent({
-        name: name.trim(),
+        name: trimmed,
         avatar,
-        difficulties,
         current_difficulty: 'easy',
         created_at: new Date().toISOString(),
         settings: { ...DEFAULT_STUDENT_SETTINGS },
@@ -89,6 +66,20 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
           <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#8B6B55', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {labels.nameLabel}
           </label>
+          <p style={{
+            fontSize: '0.75rem',
+            color: '#B09080',
+            fontWeight: 600,
+            fontFamily: "'Nunito', sans-serif",
+            lineHeight: 1.4,
+            marginBottom: 6,
+            background: '#FFF8F2',
+            padding: '8px 10px',
+            borderRadius: 10,
+            border: '1px solid #F0EAE4',
+          }}>
+            🔒 Use apenas o primeiro nome ou apelido. Nao coloque nome completo, sobrenome ou dados que identifiquem a crianca.
+          </p>
           <input
             type="text"
             value={name}
@@ -109,6 +100,7 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
               boxSizing: 'border-box',
               transition: 'border-color 0.15s',
             }}
+            maxLength={30}
             onFocus={(e) => { e.currentTarget.style.borderColor = '#FF6B35'; }}
             onBlur={(e) => { e.currentTarget.style.borderColor = '#FFD0BC'; }}
           />
@@ -143,53 +135,6 @@ export function StudentForm({ student, onSaved, onCancel }: Props) {
                 {a.emoji}
               </button>
             ))}
-          </div>
-        </div>
-
-        {/* Dificuldades */}
-        <div>
-          <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#8B6B55', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Dificuldades de Aprendizagem
-          </label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {DIFFICULTIES.map((d) => {
-              const active = difficulties.includes(d.value);
-              return (
-                <button
-                  key={d.value}
-                  onClick={() => toggleDifficulty(d.value)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '10px 14px',
-                    borderRadius: 12,
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    background: active ? d.bg : '#F9F5F2',
-                    border: active ? `2px solid ${d.border}` : '2px solid #F0EAE4',
-                    borderLeftWidth: active ? 5 : 2,
-                    transition: 'all 0.15s',
-                    boxShadow: active ? `0 3px 0 0 ${d.border}33` : 'none',
-                  }}
-                >
-                  <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{d.emoji}</span>
-                  <span
-                    style={{
-                      fontFamily: "'Nunito', system-ui, sans-serif",
-                      fontSize: '0.9rem',
-                      fontWeight: active ? 800 : 600,
-                      color: active ? d.color : '#8B6B55',
-                    }}
-                  >
-                    {d.label}
-                  </span>
-                  {active && (
-                    <span style={{ marginLeft: 'auto', fontSize: '0.9rem', color: d.color, fontWeight: 800 }}>✓</span>
-                  )}
-                </button>
-              );
-            })}
           </div>
         </div>
 

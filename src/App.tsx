@@ -5,6 +5,7 @@ import { Header } from './components/Layout/Header';
 import { Home } from './components/Layout/Home';
 import { GameSelector } from './components/GameSelector/GameSelector';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { StudentProgress } from './components/Dashboard/StudentProgress';
 import { LoginPage } from './components/Auth/LoginPage';
 import { SignupPage } from './components/Auth/SignupPage';
 import { LetterMatchGame } from './games/literacy/LetterMatch/LetterMatchGame';
@@ -32,6 +33,8 @@ import { WaterNatureGame } from './games/5ano/ciencias/WaterNature/WaterNatureGa
 // 5º Ano - Geografia e História
 import { BrazilRegionsGame } from './games/5ano/geografia-historia/BrazilRegions/BrazilRegionsGame';
 import { HistoryTimelineGame } from './games/5ano/geografia-historia/HistoryTimeline/HistoryTimelineGame';
+import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { FeedbackButton } from './components/Layout/FeedbackButton';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -92,13 +95,16 @@ function AppRoutes() {
         element={
           <AuthGuard>
             <AppProvider>
-              <div className="h-screen flex flex-col bg-bg">
+              <div className="h-screen flex flex-col bg-bg app-shell">
                 <Header />
-                <main className="flex-1 overflow-hidden">
+                <main className="flex-1 overflow-y-auto">
+                <FeedbackButton />
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/games" element={<GameSelector />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/dashboard/:id" element={<StudentProgress />} />
                     {/* Educação Infantil */}
                     <Route path="/game/letter-match" element={<LetterMatchGame />} />
                     <Route path="/game/syllable-puzzle" element={<SyllablePuzzleGame />} />

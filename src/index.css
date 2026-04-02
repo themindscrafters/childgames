@@ -35,9 +35,19 @@
 
 html, body, #root {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   font-family: 'Nunito', 'Lexend', system-ui, sans-serif;
+}
+
+/* App shell constrains height for game pages */
+.app-shell {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
 }
 
 body {
@@ -74,7 +84,6 @@ body.high-contrast {
    ============================== */
 .game-btn {
   min-width: 80px;
-  min-height: 80px;
   border-radius: 18px;
   font-size: 1.25rem;
   font-weight: 800;
